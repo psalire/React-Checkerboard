@@ -58,25 +58,27 @@ function Game() {
 
     return (
         <div>
+            <Board boardSize={boardSize} />
             <form style={{'width': form_width}}
                   className="mx-auto"
                   onSubmit={resize_board}>
-                <label htmlFor="input_size"
-                       className="m-0">
-                    Resize Board:
-                </label>
+                <div className="text-center">
+                    <label htmlFor="input_size"
+                        className="m-0">
+                        Resize Board:
+                    </label>
+                </div>
                 <input
                     id="input_size"
                     type="number"
                     min="1"
                     className="form-control" />
                 <div className="my-1 text-center">
-                    <input
-                        type="submit"
-                        className="btn btn-primary btn-sm rounded-pill" />
+                <input
+                    type="submit"
+                    className="btn btn-primary btn-sm rounded-pill" />
                 </div>
             </form>
-            <Board boardSize={boardSize} />
         </div>
     );
 }
