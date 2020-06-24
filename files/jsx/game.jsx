@@ -41,7 +41,7 @@ function Row(props) {
     var row = [];
     for (let i = 0; i < props.boardSize; i++) {
         row.push(
-            <Box playerNum={props.playerNum} />
+            <Box playerNum={props.playerNum} key={'b'+i} />
         );
     }
 
@@ -71,7 +71,8 @@ function Board(props) {
         rows.push(
             <Row
                 boardSize={props.boardSize}
-                playerNum={getPlayerNum(i)}/>
+                playerNum={getPlayerNum(i)}
+                key={'r'+i}/>
         );
     }
 
