@@ -156,7 +156,7 @@ function Game() {
         /* Piece options */
         for (let piece of ['O', 'X', 'Y']) {
             piece_options.push(
-                <label htmlFor={`${name}_option${piece}`} className="my-0">
+                <label htmlFor={`${name}_option${piece}`} className="my-0" key={piece}>
                     <input id={`${name}_option${piece}`}
                            type="radio"
                            name={name}
@@ -171,7 +171,7 @@ function Game() {
         /* Color options */
         for (let color of ['red', 'black', 'yellow']) {
             color_options.push(
-                <label htmlFor={`${name}_color${color}`} className="my-0">
+                <label htmlFor={`${name}_color${color}`} className="my-0" key={color}>
                     <input id={`${name}_color${color}`}
                            type="radio"
                            name={name+'color'}
