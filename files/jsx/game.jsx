@@ -21,7 +21,7 @@ function Box(props) {
         /* Set row & col of selected piece */
         props.setSelectedPiece([props.rowNum, props.colNum]);
         /* Set suggested moves of selected piece */
-        switch(props.playerNum) {
+        switch(props.owner) {
             case 1:
                 props.setSuggestedMoves([
                     [props.rowNum+1, props.colNum+1],
@@ -41,7 +41,7 @@ function Box(props) {
 
     var piece_color, piece_style, is_selected, is_suggested;
     /* Determine color and piece style */
-    switch(props.playerNum) {
+    switch(props.owner) {
         case 1:
             piece_color = props.playerOneColor;
             piece_style = props.playerOneStyle;
@@ -92,7 +92,7 @@ function Row(props) {
     for (let i = 0; i < props.boardSize; i++) {
         row.push(
             <Box
-                playerNum={props.playerNum}
+                owner={props.owner}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
@@ -134,7 +134,7 @@ function Board(props) {
         rows.push(
             <Row
                 boardSize={props.boardSize}
-                playerNum={get_owner(i)}
+                owner={get_owner(i)}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
