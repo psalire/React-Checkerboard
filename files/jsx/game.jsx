@@ -21,11 +21,11 @@ function Box(props) {
         piece_style;
     switch(props.playerNum) {
         case 1:
-            piece_color = "red";
+            piece_color = props.playerOneColor;
             piece_style = props.playerOneStyle;
             break;
         case 2:
-            piece_color = "black";
+            piece_color = props.playerTwoColor;
             piece_style = props.playerTwoStyle;
             break;
         default: piece_color = null;
@@ -52,6 +52,8 @@ function Row(props) {
                 playerNum={props.playerNum}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
+                playerOneColor={props.playerOneColor}
+                playerTwoColor={props.playerTwoColor}
                 key={'b'+i} />
         );
     }
@@ -85,6 +87,8 @@ function Board(props) {
                 playerNum={getPlayerNum(i)}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
+                playerOneColor={props.playerOneColor}
+                playerTwoColor={props.playerTwoColor}
                 key={'r'+i}/>
         );
     }
@@ -103,6 +107,8 @@ function Game() {
     const [boardSize, setBoardSize] = React.useState(8),
           [playerOneStyle, setPlayerOneStyle] = React.useState('P'),
           [playerTwoStyle, setPlayerTwoStyle] = React.useState('P'),
+          [playerOneColor, setPlayerOneColor] = React.useState('red'),
+          [playerTwoColor, setPlayerTwoColor] = React.useState('black'),
           /* Set form width to width of board */
           form_width = boardSize * 40; // 40px per box
 
@@ -122,12 +128,28 @@ function Game() {
                 case "2": setPlayerTwoStyle(e.target.value); break;
             }
         }
+        function handleColorChange(e) {
+            switch(props.player_num) {
+                case "1": setPlayerOneColor(e.target.value); break;
+                case "2": setPlayerTwoColor(e.target.value); break;
+            }
+        }
 
         var name = `player_${props.player_num}`,
             player_style;
         switch(props.player_num) {
-            case "1": player_style=playerOneStyle; break;
-            case "2": player_style=playerTwoStyle; break;
+            case "1":
+                player_style = {
+                    'char': playerOneStyle,
+                    'color': playerOneColor
+                };
+                break;
+            case "2":
+                player_style = {
+                    'char': playerTwoStyle,
+                    'color': playerTwoColor
+                };
+                break;
         }
 
         return (
@@ -143,7 +165,7 @@ function Game() {
                                value="P"
                                className="mx-1"
                                onChange={handleStyleChange}
-                               checked={player_style=='P'}/>
+                               checked={player_style['char']=='P'}/>
                         P
                     </label>
                     <label htmlFor={`${name}_option2`} className="my-0">
@@ -153,7 +175,7 @@ function Game() {
                                value="X"
                                onChange={handleStyleChange}
                                className="mx-1"
-                               checked={player_style=='X'}/>
+                               checked={player_style['char']=='X'}/>
                        X
                     </label>
                     <label htmlFor={`${name}_option3`} className="my-0">
@@ -163,11 +185,45 @@ function Game() {
                                value="Y"
                                onChange={handleStyleChange}
                                className="mx-1"
-                               checked={player_style=='Y'}/>
+                               checked={player_style['char']=='Y'}/>
                        Y
                    </label>
                 </div>
-
+                <div className="my-1">
+                    <label className="m-0">
+                        Player {props.player_num} Color:
+                    </label>
+                    <label htmlFor={`${name}_color1`} className="my-0">
+                        <input id={`${name}_color1`}
+                               type="radio"
+                               name={name+'color'}
+                               value="red"
+                               className="mx-1"
+                               onChange={handleColorChange}
+                               checked={player_style['color']=='red'}/>
+                        Red
+                    </label>
+                    <label htmlFor={`${name}_color2`} className="my-0">
+                        <input id={`${name}_color2`}
+                               type="radio"
+                               name={name+'color'}
+                               value="black"
+                               onChange={handleColorChange}
+                               className="mx-1"
+                               checked={player_style['color']=='black'}/>
+                       Black
+                    </label>
+                    <label htmlFor={`${name}_color3`} className="my-0">
+                        <input id={`${name}_color3`}
+                               type="radio"
+                               name={name+'color'}
+                               value="yellow"
+                               onChange={handleColorChange}
+                               className="mx-1"
+                               checked={player_style['color']=='yellow'}/>
+                       Yellow
+                   </label>
+                </div>
             </>
         );
     }
@@ -176,7 +232,9 @@ function Game() {
         <div>
             <Board boardSize={boardSize}
                    playerOneStyle={playerOneStyle}
-                   playerTwoStyle={playerTwoStyle} />
+                   playerTwoStyle={playerTwoStyle}
+                   playerOneColor={playerOneColor}
+                   playerTwoColor={playerTwoColor} />
             <form style={{'width': form_width}}
                   className="mx-auto"
                   onSubmit={restyle_board}>
@@ -191,14 +249,15 @@ function Game() {
                     id="input_size"
                     type="number"
                     min="1"
+                    value="8"
                     className="form-control" />
-                <PieceStyleOption player_num="1" />
-                <PieceStyleOption player_num="2" />
                 <div className="my-1 text-center">
                     <input
                         type="submit"
                         className="btn btn-primary btn-sm rounded-pill" />
                 </div>
+                <PieceStyleOption player_num="1" />
+                <PieceStyleOption player_num="2" />
             </form>
         </div>
     );
