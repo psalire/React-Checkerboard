@@ -140,11 +140,11 @@ function Game() {
                     <input id={`${name}_option1`}
                            type="radio"
                            name={name}
-                           value="1"
+                           value="P"
                            className="mx-1"
                            onChange={handleStyleChange}
-                           checked={player_style=='1'}/>
-                    1
+                           checked={player_style=='P'}/>
+                    P
                 </label>
                 <label htmlFor={`${name}_option2`} className="my-0">
                     <input id={`${name}_option2`}
