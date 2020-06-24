@@ -2,11 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '../scss/bs.scss';
 
+function Piece(props) {
+
+    return (
+        <div
+          className="text-center"
+          style={{'color': props.color}}>
+            P
+        </div>
+    )
+}
+
 /* Individual space on board */
 function Box(props) {
 
     return (
-        <td className="game_box"></td>
+        <td className="game_box">
+            {props.hasPiece ? <Piece color="red" /> : null}
+        </td>
     );
 }
 
@@ -15,7 +28,9 @@ function Row(props) {
 
     var row = [];
     for (let i = 0; i < props.boardSize; i++) {
-        row.push(<Box />);
+        row.push(
+            <Box hasPiece={props.hasPiece} />
+        );
     }
 
     return (
@@ -28,9 +43,14 @@ function Row(props) {
 /* Game board */
 function Board(props) {
 
+    /* Build board based on size */
     var rows = [];
     for (let i = 0; i < props.boardSize; i++) {
-        rows.push(<Row boardSize={props.boardSize}/>);
+        rows.push(
+            <Row
+                boardSize={props.boardSize}
+                hasPiece={i <= 1 || i >= 6}/>
+        );
     }
 
     return (
@@ -62,6 +82,7 @@ function Game() {
             <form style={{'width': form_width}}
                   className="mx-auto"
                   onSubmit={resize_board}>
+                <h3 className="text-center mt-1">Board Options:</h3>
                 <div className="text-center">
                     <label htmlFor="input_size"
                         className="m-0">
