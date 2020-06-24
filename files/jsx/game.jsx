@@ -2,13 +2,14 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import '../scss/bs.scss';
 
+/* Piece with color */
 function Piece(props) {
 
     return (
         <div
-          className="text-center"
+          className="text-center font-weight-bold"
           style={{'color': props.color}}>
-            P
+            {props.piece_char}
         </div>
     )
 }
@@ -24,7 +25,12 @@ function Box(props) {
     }
     return (
         <td className="game_box">
-            {piece_color ? <Piece color={piece_color} /> : null}
+            {piece_color ?
+                <Piece
+                    color={piece_color}
+                    piece_char="P"/>
+                : null
+            }
         </td>
     );
 }
