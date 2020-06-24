@@ -16,9 +16,16 @@ function Piece(props) {
 /* Individual space on board */
 function Box(props) {
 
+    var piece_color;
+    switch(props.playerNum) {
+        case 1: piece_color = "red"; break;
+        case 2: piece_color = "black"; break;
+        default: piece_color = null;
+    }
+    console.log(piece_color);
     return (
         <td className="game_box">
-            {props.hasPiece ? <Piece color="red" /> : null}
+            {piece_color ? <Piece color={piece_color} /> : null}
         </td>
     );
 }
@@ -29,7 +36,7 @@ function Row(props) {
     var row = [];
     for (let i = 0; i < props.boardSize; i++) {
         row.push(
-            <Box hasPiece={props.hasPiece} />
+            <Box playerNum={props.playerNum} />
         );
     }
 
@@ -43,13 +50,23 @@ function Row(props) {
 /* Game board */
 function Board(props) {
 
+    function getPlayerNum(i) {
+        if (i <= 1) {
+            return 1
+        }
+        else if (i >= 6) {
+            return 2;
+        }
+        return null;
+    }
+
     /* Build board based on size */
     var rows = [];
     for (let i = 0; i < props.boardSize; i++) {
         rows.push(
             <Row
                 boardSize={props.boardSize}
-                hasPiece={i <= 1 || i >= 6}/>
+                playerNum={getPlayerNum(i)}/>
         );
     }
 
@@ -91,7 +108,8 @@ function Game() {
                            type="radio"
                            name={name}
                            value="1"
-                           className="mx-1"/>
+                           className="mx-1"
+                           defaultChecked={true} />
                     1
                 </label>
                 <label htmlFor={`${name}_option2`} className="my-0">
