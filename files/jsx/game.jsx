@@ -70,7 +70,7 @@ function Board(props) {
         if (i <= 1) {
             return 1
         }
-        else if (i >= 6) {
+        else if (i >= props.boardSize - 2) {
             return 2;
         }
         return null;
