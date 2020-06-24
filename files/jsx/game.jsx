@@ -76,6 +76,44 @@ function Game() {
         }
     }
 
+    function PieceStyleOption(props) {
+
+        var name = `player_${props.player_num}`;
+
+        return (
+            <div className="my-1">
+                <label htmlFor="input_size"
+                    className="m-0">
+                    Player {props.player_num} Piece Style:
+                </label>
+                <label htmlFor={`${name}_option1`} className="my-0">
+                    <input id={`${name}_option1`}
+                           type="radio"
+                           name={name}
+                           value="1"
+                           className="mx-1"/>
+                    1
+                </label>
+                <label htmlFor={`${name}_option2`} className="my-0">
+                    <input id={`${name}_option2`}
+                           type="radio"
+                           name={name}
+                           value="X"
+                           className="mx-1"/>
+                   X
+                </label>
+                <label htmlFor={`${name}_option3`} className="my-0">
+                    <input id={`${name}_option3`}
+                           type="radio"
+                           name={name}
+                           value="Y"
+                           className="mx-1"/>
+                   Y
+               </label>
+            </div>
+        );
+    }
+
     return (
         <div>
             <Board boardSize={boardSize} />
@@ -94,10 +132,12 @@ function Game() {
                     type="number"
                     min="1"
                     className="form-control" />
+                <PieceStyleOption player_num="1" />
+                <PieceStyleOption player_num="2" />
                 <div className="my-1 text-center">
-                <input
-                    type="submit"
-                    className="btn btn-primary btn-sm rounded-pill" />
+                    <input
+                        type="submit"
+                        className="btn btn-primary btn-sm rounded-pill" />
                 </div>
             </form>
         </div>
