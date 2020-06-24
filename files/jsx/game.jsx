@@ -22,7 +22,6 @@ function Box(props) {
         case 2: piece_color = "black"; break;
         default: piece_color = null;
     }
-    console.log(piece_color);
     return (
         <td className="game_box">
             {piece_color ? <Piece color={piece_color} /> : null}

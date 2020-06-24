@@ -9,5 +9,5 @@
 /* Checkerboard pattern */
 #game_board tbody tr:nth-child(odd) td:nth-child(odd),
 #game_board tbody tr:nth-child(even) td:nth-child(even) {
-    background-color: black;
+    background-color: #444444;
 }
