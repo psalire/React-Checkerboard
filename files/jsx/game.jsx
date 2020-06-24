@@ -9,7 +9,7 @@ function Piece(props) {
         <div
           className="text-center font-weight-bold"
           style={{'color': props.color}}>
-            {props.piece_char}
+            {props.pieceChar}
         </div>
     )
 }
@@ -17,8 +17,15 @@ function Piece(props) {
 /* Individual space on board */
 function Box(props) {
 
+    /* Set row & col of selected piece */
+    function select_piece() {
+        props.setSelectedPiece([props.rowNum, props.colNum])
+    }
+
     var piece_color,
-        piece_style;
+        piece_style,
+        is_selected;
+    /* Determine color and piece style */
     switch(props.playerNum) {
         case 1:
             piece_color = props.playerOneColor;
@@ -30,12 +37,19 @@ function Box(props) {
             break;
         default: piece_color = null;
     }
+    /* Determine if self is selected */
+    if (props.selectedPiece) {
+        is_selected = props.rowNum == props.selectedPiece[0] &&
+                      props.colNum == props.selectedPiece[1];
+    }
+
     return (
-        <td className="game_box">
+        <td className={"game_box m-0"+(is_selected? " highlight_border":"")}
+            onClick={select_piece} >
             {piece_color ?
                 <Piece
                     color={piece_color}
-                    piece_char={piece_style} />
+                    pieceChar={piece_style}/>
                 : null
             }
         </td>
@@ -54,6 +68,10 @@ function Row(props) {
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
                 playerTwoColor={props.playerTwoColor}
+                rowNum={props.rowNum}
+                colNum={i}
+                selectedPiece={props.selectedPiece}
+                setSelectedPiece={props.setSelectedPiece}
                 key={'b'+i} />
         );
     }
@@ -68,7 +86,7 @@ function Row(props) {
 /* Game board */
 function Board(props) {
 
-    function getPlayerNum(i) {
+    function get_player_num(i) {
         if (i <= 1) {
             return 1
         }
@@ -84,11 +102,14 @@ function Board(props) {
         rows.push(
             <Row
                 boardSize={props.boardSize}
-                playerNum={getPlayerNum(i)}
+                playerNum={get_player_num(i)}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
                 playerTwoColor={props.playerTwoColor}
+                rowNum={i}
+                selectedPiece={props.selectedPiece}
+                setSelectedPiece={props.setSelectedPiece}
                 key={'r'+i}/>
         );
     }
@@ -109,6 +130,8 @@ function Game() {
           [playerTwoStyle, setPlayerTwoStyle] = React.useState('O'),
           [playerOneColor, setPlayerOneColor] = React.useState('red'),
           [playerTwoColor, setPlayerTwoColor] = React.useState('black'),
+          [selectedPiece, setSelectedPiece] = React.useState(null),
+          [suggestedMoves, setSuggestedMoves] = React.useState(null),
           /* Set form width to width of board */
           form_width = boardSize * 40; // 40px per box
 
@@ -120,7 +143,7 @@ function Game() {
         }
     }
 
-    function PieceStyleOption(props) {
+    function PieceStyleRadios(props) {
 
         function handleStyleChange(e) {
             switch(props.player_num) {
@@ -208,7 +231,12 @@ function Game() {
                    playerOneStyle={playerOneStyle}
                    playerTwoStyle={playerTwoStyle}
                    playerOneColor={playerOneColor}
-                   playerTwoColor={playerTwoColor} />
+                   playerTwoColor={playerTwoColor}
+                   selectedPiece={selectedPiece}
+                   setSelectedPiece={setSelectedPiece}
+                   suggestedMoves={suggestedMoves}
+                   setSuggestedMoves={setSuggestedMoves} />
+
             <form style={{'width': form_width}}
                   className="mx-auto"
                   onSubmit={restyle_board}>
@@ -219,19 +247,18 @@ function Game() {
                         Resize Board:
                     </label>
                 </div>
-                <input
-                    id="input_size"
-                    type="number"
-                    min="1"
-                    defaultValue="8"
-                    className="form-control" />
+                <input id="input_size"
+                       type="number"
+                       min="1"
+                       defaultValue="8"
+                       className="form-control" />
                 <div className="my-1 text-center">
                     <input
                         type="submit"
                         className="btn btn-primary btn-sm rounded-pill" />
                 </div>
-                <PieceStyleOption player_num="1" />
-                <PieceStyleOption player_num="2" />
+                <PieceStyleRadios player_num="1" />
+                <PieceStyleRadios player_num="2" />
             </form>
         </div>
     );
