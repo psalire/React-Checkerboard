@@ -249,7 +249,7 @@ function Game() {
                     id="input_size"
                     type="number"
                     min="1"
-                    value="8"
+                    defaultValue="8"
                     className="form-control" />
                 <div className="my-1 text-center">
                     <input
