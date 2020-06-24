@@ -1,0 +1,13 @@
+
+@import "~bootstrap/scss/bootstrap";
+
+.game_box {
+    height: 40px;
+    width: 40px;
+    @extend .border;
+}
+/* Checkerboard pattern */
+#game_board tbody tr:nth-child(odd) td:nth-child(odd),
+#game_board tbody tr:nth-child(even) td:nth-child(even) {
+    background-color: black;
+}
