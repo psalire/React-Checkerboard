@@ -131,42 +131,44 @@ function Game() {
         }
 
         return (
-            <div className="my-1">
-                <label htmlFor="input_size"
-                    className="m-0">
-                    Player {props.player_num} Piece Style:
-                </label>
-                <label htmlFor={`${name}_option1`} className="my-0">
-                    <input id={`${name}_option1`}
-                           type="radio"
-                           name={name}
-                           value="P"
-                           className="mx-1"
-                           onChange={handleStyleChange}
-                           checked={player_style=='P'}/>
-                    P
-                </label>
-                <label htmlFor={`${name}_option2`} className="my-0">
-                    <input id={`${name}_option2`}
-                           type="radio"
-                           name={name}
-                           value="X"
-                           onChange={handleStyleChange}
-                           className="mx-1"
-                           checked={player_style=='X'}/>
-                   X
-                </label>
-                <label htmlFor={`${name}_option3`} className="my-0">
-                    <input id={`${name}_option3`}
-                           type="radio"
-                           name={name}
-                           value="Y"
-                           onChange={handleStyleChange}
-                           className="mx-1"
-                           checked={player_style=='Y'}/>
-                   Y
-               </label>
-            </div>
+            <>
+                <div className="my-1">
+                    <label className="m-0">
+                        Player {props.player_num} Piece Style:
+                    </label>
+                    <label htmlFor={`${name}_option1`} className="my-0">
+                        <input id={`${name}_option1`}
+                               type="radio"
+                               name={name}
+                               value="P"
+                               className="mx-1"
+                               onChange={handleStyleChange}
+                               checked={player_style=='P'}/>
+                        P
+                    </label>
+                    <label htmlFor={`${name}_option2`} className="my-0">
+                        <input id={`${name}_option2`}
+                               type="radio"
+                               name={name}
+                               value="X"
+                               onChange={handleStyleChange}
+                               className="mx-1"
+                               checked={player_style=='X'}/>
+                       X
+                    </label>
+                    <label htmlFor={`${name}_option3`} className="my-0">
+                        <input id={`${name}_option3`}
+                               type="radio"
+                               name={name}
+                               value="Y"
+                               onChange={handleStyleChange}
+                               className="mx-1"
+                               checked={player_style=='Y'}/>
+                       Y
+                   </label>
+                </div>
+
+            </>
         );
     }
 
