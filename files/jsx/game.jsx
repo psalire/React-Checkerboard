@@ -196,36 +196,7 @@ function Game() {
                     <label className="m-0">
                         Player {props.player_num} Color:
                     </label>
-                    <label htmlFor={`${name}_color1`} className="my-0">
-                        <input id={`${name}_color1`}
-                               type="radio"
-                               name={name+'color'}
-                               value="red"
-                               className="mx-1"
-                               onChange={handleColorChange}
-                               checked={player_style['color']=='red'}/>
-                        Red
-                    </label>
-                    <label htmlFor={`${name}_color2`} className="my-0">
-                        <input id={`${name}_color2`}
-                               type="radio"
-                               name={name+'color'}
-                               value="black"
-                               onChange={handleColorChange}
-                               className="mx-1"
-                               checked={player_style['color']=='black'}/>
-                       Black
-                    </label>
-                    <label htmlFor={`${name}_color3`} className="my-0">
-                        <input id={`${name}_color3`}
-                               type="radio"
-                               name={name+'color'}
-                               value="yellow"
-                               onChange={handleColorChange}
-                               className="mx-1"
-                               checked={player_style['color']=='yellow'}/>
-                       Yellow
-                   </label>
+                    {color_options}
                 </div>
             </>
         );
