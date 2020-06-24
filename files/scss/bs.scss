@@ -19,7 +19,10 @@ html, body {
 #game_board tbody tr:nth-child(even) td:nth-child(odd) {
     @extend .bg-light;
 }
-/* Style for selecting a box */
-.highlight_border {
+/* Style for selecting & suggesting a box */
+.selected_border {
     border: 3px solid #ccff15 !important;
+}
+.suggested_border {
+    border: 3px solid #00ffff !important;
 }

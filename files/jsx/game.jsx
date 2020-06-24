@@ -17,14 +17,29 @@ function Piece(props) {
 /* Individual space on board */
 function Box(props) {
 
-    /* Set row & col of selected piece */
     function select_piece() {
-        props.setSelectedPiece([props.rowNum, props.colNum])
+        /* Set row & col of selected piece */
+        props.setSelectedPiece([props.rowNum, props.colNum]);
+        /* Set suggested moves of selected piece */
+        switch(props.playerNum) {
+            case 1:
+                props.setSuggestedMoves([
+                    [props.rowNum+1, props.colNum+1],
+                    [props.rowNum+1, props.colNum-1]
+                ]);
+                break;
+            case 2:
+                props.setSuggestedMoves([
+                    [props.rowNum-1, props.colNum+1],
+                    [props.rowNum-1, props.colNum-1]
+                ]);
+                break;
+            default:
+                props.setSuggestedMoves(null);
+        }
     }
 
-    var piece_color,
-        piece_style,
-        is_selected;
+    var piece_color, piece_style, is_selected, is_suggested;
     /* Determine color and piece style */
     switch(props.playerNum) {
         case 1:
@@ -42,9 +57,23 @@ function Box(props) {
         is_selected = props.rowNum == props.selectedPiece[0] &&
                       props.colNum == props.selectedPiece[1];
     }
+    /* Determine if self is a suggested move */
+    if (!is_selected && props.suggestedMoves) {
+        for (let suggested of props.suggestedMoves) {
+            console.log(suggested)
+            if (props.rowNum == suggested[0] &&
+                props.colNum == suggested[1]) {
+                is_suggested = true;
+                break;
+            }
+        }
+    }
 
     return (
-        <td className={"game_box m-0"+(is_selected? " highlight_border":"")}
+        <td className={"game_box m-0"+(
+                is_selected ? " selected_border"
+                : (is_suggested ? " suggested_border" : "")
+            )}
             onClick={select_piece} >
             {piece_color ?
                 <Piece
@@ -72,6 +101,8 @@ function Row(props) {
                 colNum={i}
                 selectedPiece={props.selectedPiece}
                 setSelectedPiece={props.setSelectedPiece}
+                suggestedMoves={props.suggestedMoves}
+                setSuggestedMoves={props.setSuggestedMoves}
                 key={'b'+i} />
         );
     }
@@ -86,7 +117,8 @@ function Row(props) {
 /* Game board */
 function Board(props) {
 
-    function get_player_num(i) {
+    /* Determine if box has piece, and which player owns it */
+    function get_owner(i) {
         if (i <= 1) {
             return 1
         }
@@ -102,7 +134,7 @@ function Board(props) {
         rows.push(
             <Row
                 boardSize={props.boardSize}
-                playerNum={get_player_num(i)}
+                playerNum={get_owner(i)}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
@@ -110,6 +142,8 @@ function Board(props) {
                 rowNum={i}
                 selectedPiece={props.selectedPiece}
                 setSelectedPiece={props.setSelectedPiece}
+                suggestedMoves={props.suggestedMoves}
+                setSuggestedMoves={props.setSuggestedMoves}
                 key={'r'+i}/>
         );
     }
@@ -143,8 +177,8 @@ function Game() {
         }
     }
 
+    /* Radio form for styling pieces */
     function PieceStyleRadios(props) {
-
         function handleStyleChange(e) {
             switch(props.player_num) {
                 case "1": setPlayerOneStyle(e.target.value); break;
