@@ -105,8 +105,8 @@ function Board(props) {
 function Game() {
     /* Allow user to resize board, default size 8x8 */
     const [boardSize, setBoardSize] = React.useState(8),
-          [playerOneStyle, setPlayerOneStyle] = React.useState('P'),
-          [playerTwoStyle, setPlayerTwoStyle] = React.useState('P'),
+          [playerOneStyle, setPlayerOneStyle] = React.useState('O'),
+          [playerTwoStyle, setPlayerTwoStyle] = React.useState('O'),
           [playerOneColor, setPlayerOneColor] = React.useState('red'),
           [playerTwoColor, setPlayerTwoColor] = React.useState('black'),
           /* Set form width to width of board */
@@ -136,7 +136,9 @@ function Game() {
         }
 
         var name = `player_${props.player_num}`,
-            player_style;
+            player_style,
+            piece_options = [],
+            color_options = [];
         switch(props.player_num) {
             case "1":
                 player_style = {
@@ -151,6 +153,36 @@ function Game() {
                 };
                 break;
         }
+        /* Piece options */
+        for (let piece of ['O', 'X', 'Y']) {
+            piece_options.push(
+                <label htmlFor={`${name}_option${piece}`} className="my-0">
+                    <input id={`${name}_option${piece}`}
+                           type="radio"
+                           name={name}
+                           value={piece}
+                           className="mx-1"
+                           onChange={handleStyleChange}
+                           checked={player_style['char']==piece}/>
+                    {piece}
+                </label>
+            );
+        }
+        /* Color options */
+        for (let color of ['red', 'black', 'yellow']) {
+            color_options.push(
+                <label htmlFor={`${name}_color${color}`} className="my-0">
+                    <input id={`${name}_color${color}`}
+                           type="radio"
+                           name={name+'color'}
+                           value={color}
+                           className="mx-1"
+                           onChange={handleColorChange}
+                           checked={player_style['color']==color}/>
+                    {color}
+                </label>
+            );
+        }
 
         return (
             <>
@@ -158,36 +190,7 @@ function Game() {
                     <label className="m-0">
                         Player {props.player_num} Piece Style:
                     </label>
-                    <label htmlFor={`${name}_option1`} className="my-0">
-                        <input id={`${name}_option1`}
-                               type="radio"
-                               name={name}
-                               value="P"
-                               className="mx-1"
-                               onChange={handleStyleChange}
-                               checked={player_style['char']=='P'}/>
-                        P
-                    </label>
-                    <label htmlFor={`${name}_option2`} className="my-0">
-                        <input id={`${name}_option2`}
-                               type="radio"
-                               name={name}
-                               value="X"
-                               onChange={handleStyleChange}
-                               className="mx-1"
-                               checked={player_style['char']=='X'}/>
-                       X
-                    </label>
-                    <label htmlFor={`${name}_option3`} className="my-0">
-                        <input id={`${name}_option3`}
-                               type="radio"
-                               name={name}
-                               value="Y"
-                               onChange={handleStyleChange}
-                               className="mx-1"
-                               checked={player_style['char']=='Y'}/>
-                       Y
-                   </label>
+                    {piece_options}
                 </div>
                 <div className="my-1">
                     <label className="m-0">
