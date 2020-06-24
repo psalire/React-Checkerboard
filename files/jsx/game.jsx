@@ -226,7 +226,7 @@ function Game() {
             );
         }
         /* Color options */
-        for (let color of ['red', 'black', 'yellow']) {
+        for (let color of ['red', 'black', 'green']) {
             color_options.push(
                 <label htmlFor={`${name}_color${color}`} className="my-0" key={color}>
                     <input id={`${name}_color${color}`}
