@@ -56,19 +56,9 @@ function Box(props) {
         }
     }
 
-    var piece_color, piece_style;
     /* Determine color and piece style */
-    switch(props.pieceOwner) {
-        case 1:
-            piece_color = props.playerOneColor;
-            piece_style = props.playerOneStyle;
-            break;
-        case 2:
-            piece_color = props.playerTwoColor;
-            piece_style = props.playerTwoStyle;
-            break;
-        default: piece_color = null;
-    }
+    var piece_color = props.playerColors[props.pieceOwner],
+        piece_style = props.playerStyles[props.pieceOwner];
     /* Determine if self is selected */
     var is_selected;
     if (props.selectedPiece) {
@@ -110,11 +100,11 @@ function Row(props) {
     function get_owner(row, col) {
         if (props.pieceLocations['1'][row] &&
             props.pieceLocations['1'][row][col] >= 0) {
-            return 1;
+            return "1";
         }
         else if (props.pieceLocations['2'][row] &&
                  props.pieceLocations['2'][row][col] >= 0) {
-            return 2;
+            return "2";
         }
         return null;
     }
@@ -124,10 +114,8 @@ function Row(props) {
         row.push(
             <Box
                 pieceOwner={get_owner(props.rowNum, i)}
-                playerOneStyle={props.playerOneStyle}
-                playerTwoStyle={props.playerTwoStyle}
-                playerOneColor={props.playerOneColor}
-                playerTwoColor={props.playerTwoColor}
+                playerStyles={props.playerStyles}
+                playerColors={props.playerColors}
                 pieceLocations={props.pieceLocations}
                 rowNum={props.rowNum}
                 colNum={i}
@@ -168,10 +156,8 @@ function Board(props) {
             row.push(
                 <Box
                     pieceOwner={get_owner(row_num, i)}
-                    playerOneStyle={props.playerOneStyle}
-                    playerTwoStyle={props.playerTwoStyle}
-                    playerOneColor={props.playerOneColor}
-                    playerTwoColor={props.playerTwoColor}
+                    playerStyles={props.playerStyles}
+                    playerColors={props.playerColors}
                     pieceLocations={props.pieceLocations}
                     rowNum={row_num}
                     colNum={i}
@@ -204,10 +190,8 @@ function Board(props) {
 function Game() {
     /* Allow user to resize board, default size 8x8 */
     const [boardSize, setBoardSize] = React.useState(8),
-          [playerOneStyle, setPlayerOneStyle] = React.useState('O'),
-          [playerTwoStyle, setPlayerTwoStyle] = React.useState('O'),
-          [playerOneColor, setPlayerOneColor] = React.useState('red'),
-          [playerTwoColor, setPlayerTwoColor] = React.useState('black'),
+          [playerStyles, setPlayerStyles] = React.useState({'1': 'O', '2': 'O'}),
+          [playerColors, setPlayerColors] = React.useState({'1': 'red', '2': 'black'}),
           [selectedPiece, setSelectedPiece] = React.useState(null),
           [suggestedMoves, setSuggestedMoves] = React.useState(null),
           /* Start with 8x8 board and set pieces in correct places */
@@ -254,16 +238,16 @@ function Game() {
     /* Radio form for styling pieces */
     function radio_style_form(player_num) {
         function handleStyleChange(e) {
-            switch(player_num) {
-                case "1": setPlayerOneStyle(e.target.value); break;
-                case "2": setPlayerTwoStyle(e.target.value); break;
-            }
+            setPlayerStyles({
+                ...playerStyles,
+                [player_num]: e.target.value
+            });
         }
         function handleColorChange(e) {
-            switch(player_num) {
-                case "1": setPlayerOneColor(e.target.value); break;
-                case "2": setPlayerTwoColor(e.target.value); break;
-            }
+            setPlayerColors({
+                ...playerColors,
+                [player_num]: e.target.value
+            });
         }
         /* Radio button input */
         function radio_input(term, type, name, curr_active, fun) {
@@ -283,33 +267,18 @@ function Game() {
 
         /* Determine styling */
         var name = `player_${player_num}`,
-            player_style,
             piece_options = [],
             color_options = [];
-        switch(player_num) {
-            case "1":
-                player_style = {
-                    'char': playerOneStyle,
-                    'color': playerOneColor
-                };
-                break;
-            case "2":
-                player_style = {
-                    'char': playerTwoStyle,
-                    'color': playerTwoColor
-                };
-                break;
-        }
         /* Piece options */
         for (let piece of ['O', 'X', 'Y']) {
             piece_options.push(
-                radio_input(piece, 'piece', name, player_style['char'], handleStyleChange)
+                radio_input(piece, 'piece', name, playerStyles[player_num], handleStyleChange)
             );
         }
         /* Color options */
         for (let color of ['red', 'black', 'green']) {
             color_options.push(
-                radio_input(color, 'color', name, player_style['color'], handleColorChange)
+                radio_input(color, 'color', name, playerColors[player_num], handleColorChange)
             );
         }
 
@@ -342,10 +311,8 @@ function Game() {
     return (
         <div>
             <Board boardSize={boardSize}
-                   playerOneStyle={playerOneStyle}
-                   playerTwoStyle={playerTwoStyle}
-                   playerOneColor={playerOneColor}
-                   playerTwoColor={playerTwoColor}
+                   playerStyles={playerStyles}
+                   playerColors={playerColors}
                    selectedPiece={selectedPiece}
                    setSelectedPiece={setSelectedPiece}
                    suggestedMoves={suggestedMoves}
