@@ -97,7 +97,7 @@ function Box(props) {
             {piece_color ?
                 <Piece
                     color={piece_color}
-                    pieceChar={piece_style}/>
+                    pieceChar={piece_style} />
                 : null
             }
         </td>
@@ -230,26 +230,41 @@ function Game() {
     }
 
     /* Radio form for styling pieces */
-    function PieceStyleRadios(props) {
+    function radio_style_form(player_num) {
         function handleStyleChange(e) {
-            switch(props.player_num) {
+            switch(player_num) {
                 case "1": setPlayerOneStyle(e.target.value); break;
                 case "2": setPlayerTwoStyle(e.target.value); break;
             }
         }
         function handleColorChange(e) {
-            switch(props.player_num) {
+            switch(player_num) {
                 case "1": setPlayerOneColor(e.target.value); break;
                 case "2": setPlayerTwoColor(e.target.value); break;
             }
         }
+        /* Radio button input */
+        function radio_input(term, type, name, curr_active, fun) {
+            return (
+                <label htmlFor={`${name}_${term}`} className="my-0" key={term}>
+                    <input id={`${name}_${term}`}
+                           type="radio"
+                           name={`${name}_${type}`}
+                           value={term}
+                           className="mx-1"
+                           onChange={fun}
+                           checked={curr_active==term}/>
+                    {term}
+                </label>
+            )
+        }
 
         /* Determine styling */
-        var name = `player_${props.player_num}`,
+        var name = `player_${player_num}`,
             player_style,
             piece_options = [],
             color_options = [];
-        switch(props.player_num) {
+        switch(player_num) {
             case "1":
                 player_style = {
                     'char': playerOneStyle,
@@ -266,48 +281,38 @@ function Game() {
         /* Piece options */
         for (let piece of ['O', 'X', 'Y']) {
             piece_options.push(
-                <label htmlFor={`${name}_option${piece}`} className="my-0" key={piece}>
-                    <input id={`${name}_option${piece}`}
-                           type="radio"
-                           name={name}
-                           value={piece}
-                           className="mx-1"
-                           onChange={handleStyleChange}
-                           checked={player_style['char']==piece}/>
-                    {piece}
-                </label>
+                radio_input(piece, 'piece', name, player_style['char'], handleStyleChange)
             );
         }
         /* Color options */
         for (let color of ['red', 'black', 'green']) {
             color_options.push(
-                <label htmlFor={`${name}_color${color}`} className="my-0" key={color}>
-                    <input id={`${name}_color${color}`}
-                           type="radio"
-                           name={name+'color'}
-                           value={color}
-                           className="mx-1"
-                           onChange={handleColorChange}
-                           checked={player_style['color']==color}/>
-                    {color}
-                </label>
+                radio_input(color, 'color', name, player_style['color'], handleColorChange)
             );
         }
 
         return (
             <>
-                <div className="my-1">
-                    <label className="m-0">
-                        Player {props.player_num} Piece Style:
-                    </label>
-                    {piece_options}
-                </div>
-                <div className="my-1">
-                    <label className="m-0">
-                        Player {props.player_num} Color:
-                    </label>
-                    {color_options}
-                </div>
+                <tr>
+                    <td>
+                        <label className="m-0">
+                            Player {player_num} Piece Style:
+                        </label>
+                    </td>
+                    <td className="d-flex justify-content-between">
+                        {piece_options}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <label className="m-0">
+                            Player {player_num} Color:
+                        </label>
+                    </td>
+                    <td className="d-flex justify-content-between">
+                        {color_options}
+                    </td>
+                </tr>
             </>
         );
     }
@@ -346,8 +351,15 @@ function Game() {
                         type="submit"
                         className="btn btn-primary btn-sm rounded-pill" />
                 </div>
-                <PieceStyleRadios player_num="1" />
-                <PieceStyleRadios player_num="2" />
+                <table>
+                    <thead>
+                        <tr><th colSpan="2" className="text-center">Style Options:</th></tr>
+                    </thead>
+                    <tbody>
+                        {radio_style_form("1")}
+                        {radio_style_form("2")}
+                    </tbody>
+                </table>
             </form>
         </div>
     );
