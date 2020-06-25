@@ -19,16 +19,46 @@ function Box(props) {
 
     /* Check if row, col is occupied */
     function has_piece(loc) {
-        for (let p of ['1', '2']) {
+        for (let p in props.pieceLocations) {
             if (props.pieceLocations[p] &&
                 props.pieceLocations[p][loc[0]] &&
-                props.pieceLocations[p][loc[0]][loc[1]] >= 0) {
+                props.pieceLocations[p][loc[0]].includes(loc[1])) {
                 return true
             }
         }
         return false;
     }
-    function select_piece() {
+    function handleBoardClick(origin, is_selected, is_suggested) {
+        if (is_selected) {
+            return;
+        }
+        if (is_suggested) {
+            /* Find player that owns this piece */
+            for (let p in props.pieceLocations) {
+                for (let row in props.pieceLocations[p]) {
+                    for (let col of props.pieceLocations[p][row]) {
+                        if (row == origin[0] && col == origin[1]) {
+                            /* Move piece from origin to destination */
+                            var origin_row = props.pieceLocations[p][row];
+                            origin_row.splice(origin_row.indexOf(origin[1]), 1);
+                            var dest_row = props.pieceLocations[p][props.rowNum] || [];
+                            dest_row.push(props.colNum);
+                            props.setPieceLocations({
+                                ...props.pieceLocations,
+                                [p]: {
+                                    ...props.pieceLocations[p],
+                                    [props.rowNum]: dest_row
+                                }
+                            });
+                            props.setSuggestedMoves(null);
+                            props.setSelectedPiece(null);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+
         /* Set row & col of selected piece */
         props.setSelectedPiece([props.rowNum, props.colNum]);
         /* Set suggested moves of selected piece */
@@ -49,10 +79,13 @@ function Box(props) {
                     locations.push(loc);
                 }
             }
-            props.setSuggestedMoves(locations);
+            props.setSuggestedMoves({
+                origin: [props.rowNum, props.colNum],
+                dest: locations
+            });
         }
         else {
-            props.setSuggestedMoves(null)
+            props.setSuggestedMoves(null);
         }
     }
 
@@ -66,12 +99,13 @@ function Box(props) {
                       props.colNum == props.selectedPiece[1];
     }
     /* Determine if self is a suggested move */
-    var is_suggested;
+    var is_suggested, origin;
     if (!is_selected && props.suggestedMoves) {
-        for (let suggested of props.suggestedMoves) {
+        for (let suggested of props.suggestedMoves['dest']) {
             if (props.rowNum == suggested[0] &&
                 props.colNum == suggested[1]) {
                 is_suggested = true;
+                origin = props.suggestedMoves['origin'];
                 break;
             }
         }
@@ -82,7 +116,7 @@ function Box(props) {
                 is_selected ? " selected_border"
                 : (is_suggested ? " suggested_border" : "")
             )}
-            onClick={select_piece} >
+            onClick={()=>{handleBoardClick(origin, is_selected, is_suggested)}} >
             {piece_color ?
                 <Piece
                     color={piece_color}
@@ -100,11 +134,11 @@ function Board(props) {
         /* Determine if box has piece, and which player owns it */
         function get_owner(row, col) {
             if (props.pieceLocations['1'][row] &&
-                props.pieceLocations['1'][row][col] >= 0) {
+                props.pieceLocations['1'][row].includes(col)) {
                 return 1;
             }
             else if (props.pieceLocations['2'][row] &&
-                     props.pieceLocations['2'][row][col] >= 0) {
+                     props.pieceLocations['2'][row].includes(col)) {
                 return 2;
             }
             return null;
@@ -124,6 +158,7 @@ function Board(props) {
                     setSelectedPiece={props.setSelectedPiece}
                     suggestedMoves={props.suggestedMoves}
                     setSuggestedMoves={props.setSuggestedMoves}
+                    setPieceLocations={props.setPieceLocations}
                     key={'b'+i} />
             );
         }
@@ -235,7 +270,7 @@ function Game() {
             );
         }
         /* Color options */
-        for (let color of ['red', 'black', 'green']) {
+        for (let color of ['Red', 'Black', 'Green']) {
             color_options.push(
                 radio_input(color, 'color', name, playerColors[player_num], handleColorChange)
             );
