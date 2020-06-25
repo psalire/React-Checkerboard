@@ -1,10 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { StyleForm } from './forms.jsx'
 import '../scss/bs.scss';
 
 /* Piece with color */
 function Piece(props) {
-
     return (
         <div
           className="text-center font-weight-bold piece"
@@ -93,9 +93,6 @@ function Box(props) {
         }
     }
 
-    /* Determine color and piece style */
-    var piece_color = props.playerColors[props.pieceOwner],
-        piece_style = props.playerStyles[props.pieceOwner];
     /* Determine if self is selected */
     var is_selected;
     if (props.selectedPiece) {
@@ -121,10 +118,10 @@ function Box(props) {
                 : (is_suggested ? " suggested_border" : "")
             )}
             onClick={()=>{handleBoardClick(origin, is_selected, is_suggested)}} >
-            {piece_color ?
+            {props.playerColors[props.pieceOwner] ?
                 <Piece
-                    color={piece_color}
-                    pieceChar={piece_style} />
+                    color={props.playerColors[props.pieceOwner]}
+                    pieceChar={props.playerStyles[props.pieceOwner]} />
                 : null
             }
         </td>
@@ -133,8 +130,6 @@ function Box(props) {
 
 /* Game board */
 function Board(props) {
-    /* Track whose turn it is */
-    const [turn, setTurn] = React.useState('1');
 
     function board_row(row_num) {
         /* Determine if box has piece, and which player owns it */
@@ -160,8 +155,8 @@ function Board(props) {
                     pieceLocations={props.pieceLocations}
                     rowNum={row_num}
                     colNum={i}
-                    turn={turn}
-                    setTurn={setTurn}
+                    turn={props.turn}
+                    setTurn={props.setTurn}
                     selectedPiece={props.selectedPiece}
                     setSelectedPiece={props.setSelectedPiece}
                     suggestedMoves={props.suggestedMoves}
@@ -193,12 +188,14 @@ function Board(props) {
     return (
         <table id="game_board" className="mx-auto">
             <thead>
-                <th colSpan={props.boardSize}
-                    className="text-center">
-                    <h3>
-                        Turn: <span style={{color: props.playerColors[turn]}}>Player {turn}</span>
-                    </h3>
-                </th>
+                <tr>
+                    <th colSpan={props.boardSize}
+                        className="text-center">
+                        <h3>
+                            Turn: <span style={{color: props.playerColors[props.turn]}}>Player {props.turn}</span>
+                        </h3>
+                    </th>
+                </tr>
             </thead>
             <tbody>
                 {player_label('1')}
@@ -227,35 +224,7 @@ function Game() {
                   7: [0,1,2,3,4,5,6,7]
               }
           }),
-          /* Set form width to width of board */
-          form_width = boardSize * 40; // 40px per box
-
-    function restyle_board(e) {
-        e.preventDefault();
-        var size = e.target[0].value;
-        if (size > 0) {
-            setBoardSize(size);
-            /* Update pieces */
-            let end_rows = [String(size-2), String(size-1)];
-            let pieces = {
-                '1':{
-                    '0': [],
-                    '1': []
-                },
-                '2': {
-                    [end_rows[0]]: [],
-                    [end_rows[1]]: []
-                }
-            };
-            for (let i = 0; i < size; i++) {
-                pieces['1']['0'].push(i);
-                pieces['1']['1'].push(i);
-                pieces['2'][end_rows[0]].push(i);
-                pieces['2'][end_rows[1]].push(i);
-            }
-            setPieceLocations(pieces);
-        }
-    }
+          [turn, setTurn] = React.useState('1');
 
     /* Radio form for styling pieces */
     function radio_style_form(player_num) {
@@ -333,45 +302,27 @@ function Game() {
     return (
         <div>
             <Board boardSize={boardSize}
-                   playerStyles={playerStyles}
-                   playerColors={playerColors}
-                   selectedPiece={selectedPiece}
-                   setSelectedPiece={setSelectedPiece}
-                   suggestedMoves={suggestedMoves}
-                   setSuggestedMoves={setSuggestedMoves}
-                   pieceLocations={pieceLocations}
-                   setPieceLocations={setPieceLocations}/>
-
-            <form style={{'width': form_width}}
-                  className="mx-auto"
-                  onSubmit={restyle_board}>
-                <h3 className="text-center mt-1">Board Options:</h3>
-                <div className="text-center">
-                    <label htmlFor="input_size"
-                        className="m-0">
-                        Resize Board:
-                    </label>
-                </div>
-                <input id="input_size"
-                       type="number"
-                       min="1"
-                       defaultValue="8"
-                       className="form-control" />
-                <div className="my-1 text-center">
-                    <input
-                        type="submit"
-                        className="btn btn-primary btn-sm rounded-pill" />
-                </div>
-                <table>
-                    <thead>
-                        <tr><th colSpan="2" className="text-center">Style Options:</th></tr>
-                    </thead>
-                    <tbody>
-                        {radio_style_form("1")}
-                        {radio_style_form("2")}
-                    </tbody>
-                </table>
-            </form>
+                playerStyles={playerStyles}
+                playerColors={playerColors}
+                selectedPiece={selectedPiece}
+                setSelectedPiece={setSelectedPiece}
+                suggestedMoves={suggestedMoves}
+                setSuggestedMoves={setSuggestedMoves}
+                pieceLocations={pieceLocations}
+                setPieceLocations={setPieceLocations}
+                turn={turn}
+                setTurn={setTurn} />
+            <StyleForm formWidth={
+                /* Set form width to same as board; 40px for each box */
+                    boardSize * 40
+                }
+                setPieceLocations={setPieceLocations}
+                setBoardSize={setBoardSize}
+                playerStyles={playerStyles}
+                playerColors={playerColors}
+                setPlayerStyles={setPlayerStyles}
+                setPlayerColors={setPlayerColors}
+                setTurn={setTurn} />
         </div>
     );
 }
