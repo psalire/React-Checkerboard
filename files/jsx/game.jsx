@@ -21,7 +21,7 @@ function Box(props) {
         /* Set row & col of selected piece */
         props.setSelectedPiece([props.rowNum, props.colNum]);
         /* Set suggested moves of selected piece */
-        switch(props.owner) {
+        switch(props.pieceOwner) {
             case 1:
                 props.setSuggestedMoves([
                     [props.rowNum+1, props.colNum+1],
@@ -34,14 +34,13 @@ function Box(props) {
                     [props.rowNum-1, props.colNum-1]
                 ]);
                 break;
-            default:
-                props.setSuggestedMoves(null);
+            default: props.setSuggestedMoves(null);
         }
     }
 
     var piece_color, piece_style, is_selected, is_suggested;
     /* Determine color and piece style */
-    switch(props.owner) {
+    switch(props.pieceOwner) {
         case 1:
             piece_color = props.playerOneColor;
             piece_style = props.playerOneStyle;
@@ -60,7 +59,6 @@ function Box(props) {
     /* Determine if self is a suggested move */
     if (!is_selected && props.suggestedMoves) {
         for (let suggested of props.suggestedMoves) {
-            console.log(suggested)
             if (props.rowNum == suggested[0] &&
                 props.colNum == suggested[1]) {
                 is_suggested = true;
@@ -88,11 +86,24 @@ function Box(props) {
 /* Game board row */
 function Row(props) {
 
+    /* Determine if box has piece, and which player owns it */
+    function get_owner(row, col) {
+        if (props.pieceLocations['1'][row] &&
+            props.pieceLocations['1'][row][col] >= 0) {
+            return 1;
+        }
+        else if (props.pieceLocations['2'][row] &&
+                 props.pieceLocations['2'][row][col] >= 0) {
+            return 2;
+        }
+        return null;
+    }
+
     var row = [];
     for (let i = 0; i < props.boardSize; i++) {
         row.push(
             <Box
-                owner={props.owner}
+                pieceOwner={get_owner(props.rowNum, i)}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
@@ -117,28 +128,17 @@ function Row(props) {
 /* Game board */
 function Board(props) {
 
-    /* Determine if box has piece, and which player owns it */
-    function get_owner(i) {
-        if (i <= 1) {
-            return 1
-        }
-        else if (i >= props.boardSize - 2) {
-            return 2;
-        }
-        return null;
-    }
-
     /* Build board based on size */
     var rows = [];
     for (let i = 0; i < props.boardSize; i++) {
         rows.push(
             <Row
                 boardSize={props.boardSize}
-                owner={get_owner(i)}
                 playerOneStyle={props.playerOneStyle}
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
                 playerTwoColor={props.playerTwoColor}
+                pieceLocations={props.pieceLocations}
                 rowNum={i}
                 selectedPiece={props.selectedPiece}
                 setSelectedPiece={props.setSelectedPiece}
@@ -166,6 +166,17 @@ function Game() {
           [playerTwoColor, setPlayerTwoColor] = React.useState('black'),
           [selectedPiece, setSelectedPiece] = React.useState(null),
           [suggestedMoves, setSuggestedMoves] = React.useState(null),
+          /* Start with 8x8 board and set pieces in correct places */
+          [pieceLocations, setPieceLocations] = React.useState({
+              '1': {
+                  0: [0,1,2,3,4,5,6,7],
+                  1: [0,1,2,3,4,5,6,7]
+              },
+              '2': {
+                  6: [0,1,2,3,4,5,6,7],
+                  7: [0,1,2,3,4,5,6,7]
+              }
+          }),
           /* Set form width to width of board */
           form_width = boardSize * 40; // 40px per box
 
@@ -174,6 +185,25 @@ function Game() {
         var size = e.target[0].value;
         if (size > 0) {
             setBoardSize(size);
+            /* Update pieces */
+            let end_rows = [String(size-2), String(size-1)];
+            let pieces = {
+                '1':{
+                    '0': [],
+                    '1': []
+                },
+                '2': {
+                    [end_rows[0]]: [],
+                    [end_rows[1]]: []
+                }
+            };
+            for (let i = 0; i < size; i++) {
+                pieces['1']['0'].push(i);
+                pieces['1']['1'].push(i);
+                pieces['2'][end_rows[0]].push(i);
+                pieces['2'][end_rows[1]].push(i);
+            }
+            setPieceLocations(pieces);
         }
     }
 
@@ -192,6 +222,7 @@ function Game() {
             }
         }
 
+        /* Determine styling */
         var name = `player_${props.player_num}`,
             player_style,
             piece_options = [],
@@ -269,7 +300,9 @@ function Game() {
                    selectedPiece={selectedPiece}
                    setSelectedPiece={setSelectedPiece}
                    suggestedMoves={suggestedMoves}
-                   setSuggestedMoves={setSuggestedMoves} />
+                   setSuggestedMoves={setSuggestedMoves}
+                   pieceLocations={pieceLocations}
+                   setPieceLocations={setPieceLocations} />
 
             <form style={{'width': form_width}}
                   className="mx-auto"
