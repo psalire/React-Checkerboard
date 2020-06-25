@@ -33,25 +33,27 @@ function Box(props) {
         /* Set row & col of selected piece */
         props.setSelectedPiece([props.rowNum, props.colNum]);
         /* Set suggested moves of selected piece */
-        var locations = [];
+        var locations = [],
+            potential_moves = [];
         switch(props.pieceOwner) {
             case 1:
-                for (let loc of [[props.rowNum+1, props.colNum+1], [props.rowNum+1, props.colNum-1]]) {
-                    if (!has_piece(loc)) {
-                        locations.push(loc);
-                    }
-                }
-                props.setSuggestedMoves(locations);
+                potential_moves = [[props.rowNum+1, props.colNum+1], [props.rowNum+1, props.colNum-1]];
                 break;
             case 2:
-                for (let loc of [[props.rowNum-1, props.colNum+1], [props.rowNum-1, props.colNum-1]]) {
-                    if (!has_piece(loc)) {
-                        locations.push(loc);
-                    }
-                }
-                props.setSuggestedMoves(locations);
+                potential_moves = [[props.rowNum-1, props.colNum+1], [props.rowNum-1, props.colNum-1]];
                 break;
-            default: props.setSuggestedMoves(null);
+            default: potential_moves = null;
+        }
+        if (potential_moves) {
+            for (let loc of potential_moves) {
+                if (!has_piece(loc)) {
+                    locations.push(loc);
+                }
+            }
+            props.setSuggestedMoves(locations);
+        }
+        else {
+            props.setSuggestedMoves(null)
         }
     }
 
