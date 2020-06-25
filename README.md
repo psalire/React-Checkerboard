@@ -17,13 +17,13 @@ Plan for Task 4:
 
 - Save button & maintaining game state:
     - Express:
-        - Create a POST endpoint `/save` that receives the `pieceLocations` state variable as a JSON. Save this under `req.session['saved_game']` via the express-session middleware.
-        - Create a GET endpoint `/load` that sends `req.session['saved_game']` that was previously set with `/save`.
+        - Create a POST endpoint `/save` that receives the state variable `pieceLocations` as a JSON. Save it under `req.session['saved_game']` via the express-session middleware.
+        - Create a GET endpoint `/load` that sends back `req.session['saved_game']` that was previously set with `/save`.
     - React:
         - On save button press, POST `/save` with the current `pieceLocations` value.
-        - On page load/first render, GET `load` and save to the `pieceLocations` state.
+        - On page load/first render, GET `/load` and save as `pieceLocations` initial value.
 - Reset button:
     - Express:
-        - Create POST endpoint `/reset` that triggers the server to clear `req.session['saved_game']`
+        - Create a POST endpoint `/reset` that triggers the server to clear `req.session['saved_game']`
     - React:
         - On reset button press, POST `/reset` and also reset the game board to the initial state on the front-end.
