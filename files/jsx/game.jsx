@@ -210,7 +210,7 @@ function Game() {
     /* Allow user to resize board, default size 8x8 */
     const [boardSize, setBoardSize] = React.useState(8),
           [playerStyles, setPlayerStyles] = React.useState({'1': 'O', '2': 'O'}),
-          [playerColors, setPlayerColors] = React.useState({'1': 'red', '2': 'black'}),
+          [playerColors, setPlayerColors] = React.useState({'1': 'Red', '2': 'Black'}),
           [selectedPiece, setSelectedPiece] = React.useState(null),
           [suggestedMoves, setSuggestedMoves] = React.useState(null),
           /* Start with 8x8 board and set pieces in correct places */

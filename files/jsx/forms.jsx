@@ -35,13 +35,13 @@ export function StyleForm(props) {
     function radio_style_form(player_num) {
         function handleStyleChange(e) {
             props.setPlayerStyles({
-                ...playerStyles,
+                ...props.playerStyles,
                 [player_num]: e.target.value
             });
         }
         function handleColorChange(e) {
             props.setPlayerColors({
-                ...playerColors,
+                ...props.playerColors,
                 [player_num]: e.target.value
             });
         }
