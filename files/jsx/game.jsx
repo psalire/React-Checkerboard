@@ -17,22 +17,39 @@ function Piece(props) {
 /* Individual space on board */
 function Box(props) {
 
+    /* Check if row, col is occupied */
+    function has_piece(loc) {
+        for (let p of ['1', '2']) {
+            if (props.pieceLocations[p] &&
+                props.pieceLocations[p][loc[0]] &&
+                props.pieceLocations[p][loc[0]][loc[1]] >= 0) {
+              return true
+          }
+        }
+        return false;
+    }
+
     function select_piece() {
         /* Set row & col of selected piece */
         props.setSelectedPiece([props.rowNum, props.colNum]);
         /* Set suggested moves of selected piece */
+        var locations = [];
         switch(props.pieceOwner) {
             case 1:
-                props.setSuggestedMoves([
-                    [props.rowNum+1, props.colNum+1],
-                    [props.rowNum+1, props.colNum-1]
-                ]);
+                for (let loc of [[props.rowNum+1, props.colNum+1], [props.rowNum+1, props.colNum-1]]) {
+                    if (!has_piece(loc)) {
+                        locations.push(loc);
+                    }
+                }
+                props.setSuggestedMoves(locations);
                 break;
             case 2:
-                props.setSuggestedMoves([
-                    [props.rowNum-1, props.colNum+1],
-                    [props.rowNum-1, props.colNum-1]
-                ]);
+                for (let loc of [[props.rowNum-1, props.colNum+1], [props.rowNum-1, props.colNum-1]]) {
+                    if (!has_piece(loc)) {
+                        locations.push(loc);
+                    }
+                }
+                props.setSuggestedMoves(locations);
                 break;
             default: props.setSuggestedMoves(null);
         }
@@ -108,6 +125,7 @@ function Row(props) {
                 playerTwoStyle={props.playerTwoStyle}
                 playerOneColor={props.playerOneColor}
                 playerTwoColor={props.playerTwoColor}
+                pieceLocations={props.pieceLocations}
                 rowNum={props.rowNum}
                 colNum={i}
                 selectedPiece={props.selectedPiece}
