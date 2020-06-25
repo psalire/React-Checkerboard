@@ -33,7 +33,7 @@ function Box(props) {
         props.setSelectedPiece([props.rowNum, props.colNum]);
         /* Set suggested moves of selected piece */
         var locations = [],
-            potential_moves = [];
+            potential_moves;
         switch(props.pieceOwner) {
             case 1:
                 potential_moves = [[props.rowNum+1, props.colNum+1], [props.rowNum+1, props.colNum-1]];
@@ -90,47 +90,6 @@ function Box(props) {
                 : null
             }
         </td>
-    );
-}
-
-/* Game board row */
-function Row(props) {
-
-    /* Determine if box has piece, and which player owns it */
-    function get_owner(row, col) {
-        if (props.pieceLocations['1'][row] &&
-            props.pieceLocations['1'][row][col] >= 0) {
-            return "1";
-        }
-        else if (props.pieceLocations['2'][row] &&
-                 props.pieceLocations['2'][row][col] >= 0) {
-            return "2";
-        }
-        return null;
-    }
-
-    var row = [];
-    for (let i = 0; i < props.boardSize; i++) {
-        row.push(
-            <Box
-                pieceOwner={get_owner(props.rowNum, i)}
-                playerStyles={props.playerStyles}
-                playerColors={props.playerColors}
-                pieceLocations={props.pieceLocations}
-                rowNum={props.rowNum}
-                colNum={i}
-                selectedPiece={props.selectedPiece}
-                setSelectedPiece={props.setSelectedPiece}
-                suggestedMoves={props.suggestedMoves}
-                setSuggestedMoves={props.setSuggestedMoves}
-                key={'b'+i} />
-        );
-    }
-
-    return (
-        <tr>
-            {row}
-        </tr>
     );
 }
 
