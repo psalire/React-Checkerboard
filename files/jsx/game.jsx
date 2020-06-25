@@ -242,7 +242,7 @@ function Game() {
         }
 
         return (
-            <>
+            <React.Fragment>
                 <tr>
                     <td>
                         <label className="m-0">
@@ -263,7 +263,7 @@ function Game() {
                         {color_options}
                     </td>
                 </tr>
-            </>
+            </React.Fragment>
         );
     }
 
