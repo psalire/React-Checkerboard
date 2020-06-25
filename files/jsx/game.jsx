@@ -11,7 +11,7 @@ function Piece(props) {
           style={{'color': props.color}}>
             {props.pieceChar}
         </div>
-    )
+    );
 }
 
 /* Individual space on board */
@@ -23,8 +23,8 @@ function Box(props) {
             if (props.pieceLocations[p] &&
                 props.pieceLocations[p][loc[0]] &&
                 props.pieceLocations[p][loc[0]][loc[1]] >= 0) {
-              return true
-          }
+                return true
+            }
         }
         return false;
     }
@@ -57,7 +57,7 @@ function Box(props) {
         }
     }
 
-    var piece_color, piece_style, is_selected, is_suggested;
+    var piece_color, piece_style;
     /* Determine color and piece style */
     switch(props.pieceOwner) {
         case 1:
@@ -71,11 +71,13 @@ function Box(props) {
         default: piece_color = null;
     }
     /* Determine if self is selected */
+    var is_selected;
     if (props.selectedPiece) {
         is_selected = props.rowNum == props.selectedPiece[0] &&
                       props.colNum == props.selectedPiece[1];
     }
     /* Determine if self is a suggested move */
+    var is_suggested;
     if (!is_selected && props.suggestedMoves) {
         for (let suggested of props.suggestedMoves) {
             if (props.rowNum == suggested[0] &&
