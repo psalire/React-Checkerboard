@@ -29,34 +29,38 @@ function Box(props) {
         return false;
     }
     function handleBoardClick(origin, is_selected, is_suggested) {
+        /* Prevent rerender of already selected */
         if (is_selected) {
             return;
         }
+        /* Handle moving pieces */
         if (is_suggested) {
-            /* Find player that owns this piece */
-            for (let p in props.pieceLocations) {
-                for (let row in props.pieceLocations[p]) {
-                    for (let col of props.pieceLocations[p][row]) {
-                        if (row == origin[0] && col == origin[1]) {
-                            /* Move piece from origin to destination */
-                            var origin_row = props.pieceLocations[p][row];
-                            origin_row.splice(origin_row.indexOf(origin[1]), 1);
-                            var dest_row = props.pieceLocations[p][props.rowNum] || [];
-                            dest_row.push(props.colNum);
-                            props.setPieceLocations({
-                                ...props.pieceLocations,
-                                [p]: {
-                                    ...props.pieceLocations[p],
-                                    [props.rowNum]: dest_row
-                                }
-                            });
-                            props.setSuggestedMoves(null);
-                            props.setSelectedPiece(null);
-                            return;
-                        }
+            for (let row in props.pieceLocations[props.turn]) {
+                for (let col of props.pieceLocations[props.turn][row]) {
+                    if (row == origin[0] && col == origin[1]) {
+                        /* Move piece from origin to destination */
+                        var origin_row = props.pieceLocations[props.turn][row];
+                        origin_row.splice(origin_row.indexOf(origin[1]), 1);
+                        var dest_row = props.pieceLocations[props.turn][props.rowNum] || [];
+                        dest_row.push(props.colNum);
+                        props.setPieceLocations({
+                            ...props.pieceLocations,
+                            [props.turn]: {
+                                ...props.pieceLocations[props.turn],
+                                [props.rowNum]: dest_row
+                            }
+                        });
+                        props.setTurn(props.turn=='1' ? '2' : '1');
+                        props.setSuggestedMoves(null);
+                        props.setSelectedPiece(null);
                     }
                 }
             }
+            return;
+        }
+        /* Ignore click if not turn owner */
+        if (props.pieceOwner != props.turn) {
+            return
         }
 
         /* Set row & col of selected piece */
@@ -129,6 +133,8 @@ function Box(props) {
 
 /* Game board */
 function Board(props) {
+    /* Track whose turn it is */
+    const [turn, setTurn] = React.useState('1');
 
     function board_row(row_num) {
         /* Determine if box has piece, and which player owns it */
@@ -154,6 +160,8 @@ function Board(props) {
                     pieceLocations={props.pieceLocations}
                     rowNum={row_num}
                     colNum={i}
+                    turn={turn}
+                    setTurn={setTurn}
                     selectedPiece={props.selectedPiece}
                     setSelectedPiece={props.setSelectedPiece}
                     suggestedMoves={props.suggestedMoves}
@@ -162,8 +170,18 @@ function Board(props) {
                     key={'b'+i} />
             );
         }
-
         return <tr>{row}</tr>;
+    }
+    function player_label(player_num) {
+        return (
+            <tr>
+                <td colSpan={props.boardSize}
+                    className="text-center bg-light font-weight-bold border"
+                    style={{color: props.playerColors[player_num]}}>
+                    Player {player_num}
+                </td>
+            </tr>
+        );
     }
 
     /* Build board based on size */
@@ -174,8 +192,18 @@ function Board(props) {
 
     return (
         <table id="game_board" className="mx-auto">
+            <thead>
+                <th colSpan={props.boardSize}
+                    className="text-center">
+                    <h3>
+                        Turn: <span style={{color: props.playerColors[turn]}}>Player {turn}</span>
+                    </h3>
+                </th>
+            </thead>
             <tbody>
+                {player_label('1')}
                 {rows}
+                {player_label('2')}
             </tbody>
         </table>
     );
@@ -312,7 +340,7 @@ function Game() {
                    suggestedMoves={suggestedMoves}
                    setSuggestedMoves={setSuggestedMoves}
                    pieceLocations={pieceLocations}
-                   setPieceLocations={setPieceLocations} />
+                   setPieceLocations={setPieceLocations}/>
 
             <form style={{'width': form_width}}
                   className="mx-auto"
