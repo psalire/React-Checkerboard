@@ -2,4 +2,6 @@
 
 ## Build
 
-Build with `npm run build` and view at localhost:8001/
+- Build with `npm run build`
+- Run with `npm start`
+- View at http://localhost:8001/
