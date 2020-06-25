@@ -7,7 +7,7 @@ function Piece(props) {
 
     return (
         <div
-          className="text-center font-weight-bold"
+          className="text-center font-weight-bold piece"
           style={{'color': props.color}}>
             {props.pieceChar}
         </div>
@@ -28,7 +28,6 @@ function Box(props) {
         }
         return false;
     }
-
     function select_piece() {
         /* Set row & col of selected piece */
         props.setSelectedPiece([props.rowNum, props.colNum]);
@@ -150,24 +149,47 @@ function Row(props) {
 /* Game board */
 function Board(props) {
 
+    function board_row(row_num) {
+        /* Determine if box has piece, and which player owns it */
+        function get_owner(row, col) {
+            if (props.pieceLocations['1'][row] &&
+                props.pieceLocations['1'][row][col] >= 0) {
+                return 1;
+            }
+            else if (props.pieceLocations['2'][row] &&
+                     props.pieceLocations['2'][row][col] >= 0) {
+                return 2;
+            }
+            return null;
+        }
+
+        var row = [];
+        for (let i = 0; i < props.boardSize; i++) {
+            row.push(
+                <Box
+                    pieceOwner={get_owner(row_num, i)}
+                    playerOneStyle={props.playerOneStyle}
+                    playerTwoStyle={props.playerTwoStyle}
+                    playerOneColor={props.playerOneColor}
+                    playerTwoColor={props.playerTwoColor}
+                    pieceLocations={props.pieceLocations}
+                    rowNum={row_num}
+                    colNum={i}
+                    selectedPiece={props.selectedPiece}
+                    setSelectedPiece={props.setSelectedPiece}
+                    suggestedMoves={props.suggestedMoves}
+                    setSuggestedMoves={props.setSuggestedMoves}
+                    key={'b'+i} />
+            );
+        }
+
+        return <tr>{row}</tr>;
+    }
+
     /* Build board based on size */
     var rows = [];
     for (let i = 0; i < props.boardSize; i++) {
-        rows.push(
-            <Row
-                boardSize={props.boardSize}
-                playerOneStyle={props.playerOneStyle}
-                playerTwoStyle={props.playerTwoStyle}
-                playerOneColor={props.playerOneColor}
-                playerTwoColor={props.playerTwoColor}
-                pieceLocations={props.pieceLocations}
-                rowNum={i}
-                selectedPiece={props.selectedPiece}
-                setSelectedPiece={props.setSelectedPiece}
-                suggestedMoves={props.suggestedMoves}
-                setSuggestedMoves={props.setSuggestedMoves}
-                key={'r'+i}/>
-        );
+        rows.push(board_row(i));
     }
 
     return (
